@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>关于 憨憨每日Todo</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: "Segoe UI", sans-serif;
+            background: linear-gradient(135deg, #1d1f27, #282c34);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center; /* ✅ 内容始终居中 */
+            padding: 20px;
+            height: 100vh;
+            text-align: center;
+            overflow: hidden; /* ✅ 禁止滚动 */
+        }
+
+        body::-webkit-scrollbar {
+            width: 0px; /* ✅ 隐藏滚动条 */
+            background: transparent;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 26px;
+            color: #00ffcc;
+        }
+
+        p {
+            margin: 8px 0;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .intro {
+            margin-top: 15px;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.6;
+            max-width: 350px;
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 12px;
+            opacity: 0.6;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 6px 16px;
+            background: #00ffcc;
+            color: #000;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #00ccaa;
+        }
+    </style>
+</head>
+<body>
+<h1>憨憨每日Todo</h1>
+<p>版本: 1.0.0</p>
+<p>作者: kingyifan</p>
+<p>邮箱: kingyifan@88.com</p>
+
+<div class="intro">
+    <p><strong>为什么做这个软件？</strong></p>
+    <p>
+        在忙碌的生活和工作中，<br>
+        我们常常会忘记一些重要的事情。<br></p>
+    <p>
+        我希望有一个简洁、安全、随时都能打开的工具，<br>
+        来记录当天的待办事项，帮我专注和自律。<br>
+    </p>
+    <p>
+        这就是「憨憨每日Todo」的初衷 ——<br>
+        让待办清单变得简单、轻松、好用。<br>
+    </p>
+</div>
+
+<div class="footer">© 2025 憨憨Todo. All rights reserved.</div>
+<button onclick="window.close()">关闭</button>
+</body>
+</html>
