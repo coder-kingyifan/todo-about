@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>下载 憨憨每日Todo</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: "Segoe UI", sans-serif;
+            background: linear-gradient(135deg, #1d1f27, #282c34);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 20px;
+            min-height: 100vh;
+            text-align: center;
+            overflow-y: hidden;
+        }
+
+        body::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+
+        .header {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            padding: 15px 20px;
+            border-radius: 8px;
+        }
+
+        .back-btn {
+            padding: 8px 16px;
+            background: #00ffcc;
+            color: #000;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+        .back-btn:hover {
+            background: #00ccaa;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 26px;
+            color: #00ffcc;
+            flex-grow: 1;
+            text-align: center;
+        }
+
+        .versions-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-height: calc(100vh - 160px);
+            overflow-y: auto;
+            padding: 10px 0;
+            scrollbar-width: none; /* Firefox */
+        }
+
+        .versions-container::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+
+        .version-item {
+            margin: 15px 0;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            max-width: 600px;
+            width: 100%;
+            text-align: left;
+            position: relative;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .version-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .version-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .version-title-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .version-title {
+            font-weight: 700;
+            font-size: 22px;
+            margin: 0;
+        }
+
+        .version-date {
+            font-size: 15px;
+            opacity: 0.8;
+            min-width: fit-content;
+        }
+
+        .current-version-tag {
+            background: linear-gradient(45deg, #00ffcc, #00ccaa);
+            color: #000;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+        }
+
+        .version-updates {
+            font-size: 15px;
+            margin: 20px 0;
+            line-height: 1.6;
+        }
+
+        .version-updates ul {
+            padding-left: 25px;
+            margin: 15px 0;
+        }
+
+        .version-updates li {
+            margin: 8px 0;
+            padding-left: 10px;
+        }
+
+        .version-updates li::marker {
+            color: #00ffcc;
+        }
+
+        .version-download {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .version-download a {
+            padding: 10px 20px;
+            background: rgba(0, 255, 204, 0.1);
+            border-radius: 8px;
+            text-decoration: none;
+            color: #00ffcc;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 255, 204, 0.3);
+        }
+
+        .version-download a:hover {
+            background: rgba(0, 255, 204, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 204, 0.2);
+        }
+
+        .loading, .error {
+            color: #00ffcc;
+            font-size: 18px;
+            text-align: center;
+            padding: 40px 20px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .error {
+            color: #ff6b6b;
+        }
+
+        .version-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            margin: 30px 0;
+            width: 80%;
+        }
+
+        @media (max-width: 600px) {
+            .header {
+                flex-direction: row;
+                gap: 15px;
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 22px;
+                text-align: center;
+            }
+
+            .version-item {
+                padding: 20px;
+            }
+
+            .version-title {
+                font-size: 20px;
+            }
+
+            .version-download {
+                flex-direction: column;
+            }
+
+            .version-download a {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    <button class="back-btn" onclick="goBack()">← 返回</button>
+    <h1>憨憨每日Todo 版本列表</h1>
+</div>
+
+<div class="versions-container">
+    <div id="versionList">
+        <div class="loading">正在加载版本信息...</div>
+    </div>
+</div>
+
+<script>
+    let versionsData = [];
+
+    // 页面加载时读取版本信息
+    window.addEventListener('DOMContentLoaded', function () {
+        loadVersions();
+    });
+
+    // 读取版本信息
+    function loadVersions() {
+        fetch('../config/versions.txt')
+            .then(response => response.text())
+            .then(data => {
+                // 解析版本数据
+                versionsData = data.trim().split('\n').map(line => {
+                    const [version, date, giteeUrl, githubUrl, updates] = line.split('|');
+                    return {
+                        version,
+                        date,
+                        giteeUrl,
+                        githubUrl,
+                        updates: updates.split(',')
+                    };
+                });
+
+                // 显示版本列表
+                if (versionsData.length > 0) {
+                    displayVersionList(versionsData);
+                }
+            })
+            .catch(error => {
+                console.error('读取版本信息失败:', error);
+                document.getElementById('versionList').innerHTML = '<div class="error">加载版本信息失败</div>';
+            });
+    }
+
+    // 显示版本列表
+    function displayVersionList(versions) {
+        const listContainer = document.getElementById('versionList');
+        listContainer.innerHTML = '';
+
+        versions.forEach((version, index) => {
+            const versionItem = document.createElement('div');
+            versionItem.className = 'version-item';
+
+            const isLatest = index === 0;
+            const latestTag = isLatest ? '<span class="current-version-tag">最新版本</span>' : '';
+
+            versionItem.innerHTML = `
+                <div class="version-header">
+                    <div class="version-title-container">
+                        <h2 class="version-title">v${version.version}</h2>
+                        ${latestTag}
+                    </div>
+                    <div class="version-date">${version.date}</div>
+                </div>
+                <div class="version-updates">
+                    <ul>
+                        ${version.updates.map(update => `<li>${update}</li>`).join('')}
+                    </ul>
+                </div>
+                <div class="version-download">
+                    <a href="${version.giteeUrl}" target="_blank">国内下载</a>
+                    <a href="${version.githubUrl}" target="_blank">国外下载</a>
+                </div>
+            `;
+
+            listContainer.appendChild(versionItem);
+
+            // 在版本项之间添加分隔线（除了最后一个）
+            if (index < versions.length - 1) {
+                const divider = document.createElement('div');
+                divider.className = 'version-divider';
+                listContainer.appendChild(divider);
+            }
+        });
+    }
+
+    function goBack() {
+        // 获取URL中的版本参数
+        const urlParams = new URLSearchParams(window.location.search);
+        const version = urlParams.get('version') || (versionsData.length > 0 ? versionsData[0].version : '1.0.0');
+
+        // 返回时携带版本参数，避免重复提示
+        window.location.href = "../index.html?version=" + encodeURIComponent(version);
+    }
+</script>
+</body>
+</html>

@@ -2,7 +2,7 @@
 <html lang="zh-CN" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
-    <title>关于 憨憨每日Todo</title>
+    <title>关于 憨憨每日Todo桌面版</title>
     <style>
         body {
             margin: 0;
@@ -12,15 +12,15 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center; /* ✅ 内容始终居中 */
+            justify-content: center;
             padding: 20px;
             height: 100vh;
             text-align: center;
-            overflow: hidden; /* ✅ 禁止滚动 */
+            overflow: hidden;
         }
 
         body::-webkit-scrollbar {
-            width: 0px; /* ✅ 隐藏滚动条 */
+            width: 0px;
             background: transparent;
         }
 
@@ -66,11 +66,90 @@
         button:hover {
             background: #00ccaa;
         }
+
+        /* 新增版本更新提示框样式 */
+        .update-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #282c34;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 350px;
+            width: 80%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content h2 {
+            color: #00ffcc;
+            margin-top: 0;
+        }
+
+        .modal-buttons {
+            margin-top: 20px;
+        }
+
+        .modal-buttons button {
+            margin: 0 10px;
+        }
+
+        .update-btn {
+            background: #00ffcc;
+            color: #000;
+        }
+
+        .cancel-btn {
+            background: #666;
+            color: #fff;
+        }
+
+        .loading {
+            color: #00ffcc;
+            font-size: 14px;
+        }
+
+        /* 更新按钮样式 */
+        .check-update-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-weight: normal;
+            font-size: 12px;
+            padding: 4px 12px;
+            margin-top: 10px;
+        }
+
+        .check-update-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* 版本更新提示样式 */
+        .version-update {
+            color: #ff6b6b;
+            font-size: 12px;
+            margin-left: 8px;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .version-update:hover {
+            color: #ff4757;
+        }
     </style>
 </head>
 <body>
 <h1>憨憨每日Todo</h1>
-<p>版本: 1.0.0</p>
+<p id="versionText">版本: v1.0.1</p>
 <p>作者: kingyifan</p>
 <p>邮箱: kingyifan@88.com</p>
 
@@ -91,5 +170,97 @@
 
 <div class="footer">© 2025 憨憨Todo. All rights reserved.</div>
 <button onclick="window.close()">关闭</button>
+
+
+
+<script>
+    // 全局变量存储版本信息
+    let versionsData = [];
+    let currentVersion = "1.0.1";
+    let userVersion = null;
+
+    // 页面加载时读取版本信息
+    window.addEventListener('DOMContentLoaded', function () {
+        loadVersions();
+    });
+
+    // 读取版本信息
+    function loadVersions() {
+        fetch('./config/versions.txt')
+            .then(response => response.text())
+            .then(data => {
+                // 解析版本数据
+                versionsData = data.trim().split('\n').map(line => {
+                    const [version, date, giteeUrl, githubUrl, updates] = line.split('|');
+                    return {
+                        version,
+                        date,
+                        giteeUrl,
+                        githubUrl,
+                        updates: updates.split(',')
+                    };
+                });
+
+                // 获取最新版本信息
+                if (versionsData.length > 0) {
+                    currentVersion = versionsData[0].version;
+                    // 获取用户当前版本
+                    const urlParams = new URLSearchParams(window.location.search);
+                    userVersion = urlParams.get('version') || currentVersion;
+
+                    // 显示版本信息，加上 v 前缀
+                    const versionElement = document.getElementById('versionText');
+                    if (userVersion !== currentVersion) {
+                        // 如果不是最新版本，显示更新提示
+                        versionElement.innerHTML = '版本: v' + userVersion + '<span class="version-update" onclick="goToDownload()">有新版本更新</span>';
+                    } else {
+                        // 如果是最新版本，只显示版本号
+                        versionElement.textContent = '版本: v' + userVersion;
+                    }
+                }
+
+                // 检查是否需要更新
+                checkForUpdates();
+            })
+            .catch(error => {
+                console.error('读取版本信息失败:', error);
+                // 使用默认版本检查逻辑
+                checkForUpdates();
+            });
+    }
+
+    // 检查是否需要更新
+    function checkForUpdates() {
+        // 获取用户当前版本
+        const urlParams = new URLSearchParams(window.location.search);
+        const passedVersion = urlParams.get('version') || currentVersion;
+        userVersion = passedVersion;
+
+        // 显示版本信息，加上 v 前缀
+        const versionElement = document.getElementById('versionText');
+        if (passedVersion !== currentVersion) {
+            // 如果不是最新版本，显示更新提示
+            versionElement.innerHTML = '当前版本: v' + passedVersion + '<span class="version-update" onclick="goToDownload()">有新版本更新</span>';
+        } else {
+            // 如果是最新版本，只显示版本号
+            versionElement.textContent = '版本: v' + passedVersion;
+        }
+
+        // 如果传入的版本与当前版本不一致，则显示更新提示
+        if (passedVersion && passedVersion !== currentVersion) {
+            document.getElementById('updateModal').style.display = 'flex';
+        }
+    }
+
+    // 跳转到下载页面，并携带当前版本参数
+    function goToDownload() {
+        // 获取当前URL中的版本参数
+        const urlParams = new URLSearchParams(window.location.search);
+        const passedVersion = urlParams.get('version') || currentVersion;
+        window.location.href = "./html/download.html?version=" + encodeURIComponent(passedVersion);
+    }
+
+
+</script>
 </body>
 </html>
