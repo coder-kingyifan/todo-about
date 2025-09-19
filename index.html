@@ -233,8 +233,8 @@
     function checkForUpdates() {
         // 获取用户当前版本
         const urlParams = new URLSearchParams(window.location.search);
-        const passedVersion = urlParams.get('version') || currentVersion;
-        userVersion = passedVersion;
+        const passedVersion = urlParams.get('version');
+        userVersion = passedVersion || "1.0.0";
 
         // 显示版本信息，加上 v 前缀
         const versionElement = document.getElementById('versionText');
