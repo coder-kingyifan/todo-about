@@ -259,7 +259,11 @@
     function goToDownload() {
         // 获取当前URL中的版本参数
         const urlParams = new URLSearchParams(window.location.search);
-        const passedVersion = urlParams.get('version') || currentVersion;
+        let passedVersion = urlParams.get('version');
+        if (passedVersion == null) {
+            // 如果没有传递版本参数，则使用默认版本
+            passedVersion = "1.0.0";
+        }
         window.location.href = "./html/download.html?version=" + encodeURIComponent(passedVersion);
     }
 
