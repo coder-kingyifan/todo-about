@@ -238,10 +238,13 @@
 
         // 显示版本信息，加上 v 前缀
         const versionElement = document.getElementById('versionText');
-        if (passedVersion !== currentVersion) {
+        if (passedVersion==null ) {
+            // 如果没有传递则是1.0.0版本
+            versionElement.innerHTML = '当前版本: v1.0.0'  + '<span class="version-update" onclick="goToDownload()">有新版本更新</span>';
+        } else if(passedVersion !== currentVersion){
             // 如果不是最新版本，显示更新提示
             versionElement.innerHTML = '当前版本: v' + passedVersion + '<span class="version-update" onclick="goToDownload()">有新版本更新</span>';
-        } else {
+        }else {
             // 如果是最新版本，只显示版本号
             versionElement.textContent = '版本: v' + passedVersion;
         }
